@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Check if installed locally (smf.lua is in the same directory as this script) or in the system (smf.lua is in /usr/share/stomp-my-files)
+if [ -f "$(dirname $0)/smf.lua" ]; then
+	# Installed locally
+	SCRIPT_PATH="$(dirname $0)"
+elif [ -f "/usr/share/stomp-my-files/smf.lua" ]; then
+	# Installed in the system
+	SCRIPT_PATH="/usr/share/stomp-my-files"
+else
+	echo "smf.lua not found. Please install StompMyFiles and try again."
+	exit 1
+fi
+
+# Set LUA_PATH to avoid missing require issues, using the detected directory
+export LUA_PATH="$SCRIPT_PATH/?.lua;$SCRIPT_PATH/?/init.lua;;"
+
+# Check if LuaJIT, Ravi or Lua is installed and run smf.lua, accounting for the script path
+if [ -x "$(command -v luajit)" ]; then
+	luajit $SCRIPT_PATH/smf.lua "$@"
+elif [ -x "$(command -v ravi)" ]; then
+	ravi $SCRIPT_PATH/smf.lua "$@"
+elif [ -x "$(command -v lua)" ]; then
+	lua $SCRIPT_PATH/smf.lua "$@"
+else
+	echo "No LuaJIT, Ravi or Lua installation found. Please install one of them and try again."
+fi
