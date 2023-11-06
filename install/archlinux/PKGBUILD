@@ -19,7 +19,7 @@ depends=(
 optdepends=(
 	'7z: Use 7z system installation for compression'
 	'upx: (Not used yet) Use UPX system installation for compression'
-	'dolphin-emu: (Not used yet) Use Dolphin Emulator system installation for compression'
+	'dolphin-emu: Use Dolphin Emulator system installation for compression'
 	'nsz: (Not used yet) Use NSZ system installation for compression'
 )
 makedepends=(git)
