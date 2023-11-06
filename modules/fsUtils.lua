@@ -31,6 +31,17 @@ function fsUtils.getFileName(path)
 	end
 end
 
+-- Grab file name without extension
+function fsUtils.getFileNameNoExt(path)
+	local filename = fsUtils.getFileName(path)
+	local filenameWithoutExtension = filename:match("(.+)%..+")
+	if filenameWithoutExtension then
+		return filenameWithoutExtension
+	else
+		return filename
+	end
+end
+
 -- Grab directory
 function fsUtils.getDirectory(path)
 	local directory = path:match("^(.+)/[^/]+$")

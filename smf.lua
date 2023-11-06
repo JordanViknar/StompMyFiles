@@ -14,7 +14,7 @@ local compressors = {
 
 	-- Less common, but advantaged when used right.
 	-- ["upx"] = require("compressors.upx"),
-	-- ["dolphin-tool"] = require("compressors.dolphin-tool"),
+	["dolphin-tool"] = require("compressors.dolphin-tool")
 	-- ["nsz"] = require("compressors.nsz")
 }
 local bannedExtensions = require("extra.bannedExtensions")
@@ -105,6 +105,19 @@ for _,input in ipairs(ARGUMENTS.toBeCompressed) do
 			end,
 			["xz"] = function()
 				attemptOperation("xz", "decompress", input)
+			end,
+			["iso"] = function()
+				if ARGUMENTS.settings.isoMode == "wii_gc" then
+					attemptOperation("dolphin-tool", "compress", input)
+				elseif ARGUMENTS.settings.isoMode == "iso" then
+					attemptOperation("xz", "compress", input)
+				else
+					logSystem.log("warning", "No behavior specified for ISOs. Skipping...")
+					filesSkipped = filesSkipped + 1
+				end
+			end,
+			["rvz"] = function()
+				attemptOperation("dolphin-tool", "decompress", input)
 			end
 		}
 		local f = switch[extension]

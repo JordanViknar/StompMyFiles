@@ -23,6 +23,7 @@ end
 -- Definitions
 local compressorName = "xz"
 local localVersion = nil
+
 local function checkFunction()
 	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == true and ARGUMENTS.settings.ignoreSystemLibs == false) then
 		return "system"
@@ -31,6 +32,7 @@ local function checkFunction()
 		return "unavailable"
 	end
 end
+
 local function compressFunction(input)
 	local ram = getMemoryToUse()
 
@@ -38,6 +40,7 @@ local function compressFunction(input)
 	os.execute(compressorManager.selectCompressionTool("xz").." -z9e --threads=0 --memlimit="..ram.."GB '"..input.."'")
 	return "success"
 end
+
 local function decompressFunction(input)
 	local ram = getMemoryToUse()
 

@@ -28,7 +28,7 @@ local arguments = {
 		if isoMode == nil then
 			print("----------------------------------------------------------------------------")
 			print("WARNING ! StompMyFiles aims for pure brute strength, not performance !")
-			print("Wii/GameCube games compressed with it may not perform well or disfunction until decompression.")
+			print("Wii/GameCube games compressed with it may not perform well or malfunction until decompression.")
 			print("----------------------------------------------------------------------------")
 			io.write("Press Enter to confirm you've read this prompt.")
 			io.read()
