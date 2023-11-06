@@ -10,7 +10,7 @@ local compressorName = "7z"
 local localVersion = "2301"
 
 local function checkFunction()
-	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == 0 and ARGUMENTS.settings.ignoreSystemLibs == false) then
+	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == true and ARGUMENTS.settings.ignoreSystemLibs == false) then
 		return "system"
 	else
 		logSystem.log("warning", "7z is not available from your system. Checking local cache...")

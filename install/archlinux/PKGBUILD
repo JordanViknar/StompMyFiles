@@ -8,6 +8,7 @@ arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 url=https://github.com/JordanViknar/Stomp-My-Files
 license=(MPL-2.0)
 depends=(
+	'lua'
 	'wget'
 	'iputils'
 	'which'
@@ -16,9 +17,6 @@ depends=(
 	'xz'
 )
 optdepends=(
-	'luajit: Run app with LuaJIT'
-	'ravi: Run app with Ravi'
-	'lua: Run app with Lua'
 	'7z: Use 7z system installation for compression'
 	'upx: (Not used yet) Use UPX system installation for compression'
 	'dolphin-emu: (Not used yet) Use Dolphin Emulator system installation for compression'

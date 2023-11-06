@@ -15,13 +15,9 @@ fi
 # Set LUA_PATH to avoid missing require issues, using the detected directory
 export LUA_PATH="$SCRIPT_PATH/?.lua;$SCRIPT_PATH/?/init.lua;;"
 
-# Check if LuaJIT, Ravi or Lua is installed and run smf.lua, accounting for the script path
-if [ -x "$(command -v luajit)" ]; then
-	luajit $SCRIPT_PATH/smf.lua "$@"
-elif [ -x "$(command -v ravi)" ]; then
-	ravi $SCRIPT_PATH/smf.lua "$@"
-elif [ -x "$(command -v lua)" ]; then
+# Check if Lua is installed and run smf.lua, accounting for the script path
+if [ -x "$(command -v lua)" ]; then
 	lua $SCRIPT_PATH/smf.lua "$@"
 else
-	echo "No LuaJIT, Ravi or Lua installation found. Please install one of them and try again."
+	echo "No Lua installation found. Please install Lua and try again."
 fi
