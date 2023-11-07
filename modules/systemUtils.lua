@@ -19,12 +19,13 @@ function systemUtils.checkPlatform()
 end
 
 function systemUtils.isInternetAvailable()
-	local internetTest = os.execute("ping -q -c 1 1.1.1.1")
+	local internetTest = os.execute("ping -q -c 1 1.1.1.1 &> /dev/null")
+
 	if internetTest == true then
 		logSystem.log("debug", "Internet connection is available.")
 		return true
 	else
-		logSystem.log("warning", "Internet connection is not available.")
+		logSystem.log("error", "Internet connection is not available.")
 		return false
 	end
 end

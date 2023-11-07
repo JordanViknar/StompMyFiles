@@ -37,7 +37,13 @@ local function compressFunction(input)
 	local ram = getMemoryToUse()
 
 	logSystem.log("info", "Compressing "..input.." using XZ with "..ram.."GB of RAM.")
-	os.execute(compressorManager.selectCompressionTool("xz").." -z9e --threads=0 --memlimit="..ram.."GB '"..input.."'")
+	local command = string.format("%s -z9e --threads=0 --memlimit=%sGB '%s'",
+		compressorManager.selectCompressionTool("xz"),
+		ram,
+		input:gsub("'", "'\\''")
+	)
+	logSystem.log("debug", "Running command : "..command)
+	os.execute(command)
 	return "success"
 end
 
@@ -45,7 +51,13 @@ local function decompressFunction(input)
 	local ram = getMemoryToUse()
 
 	logSystem.log("info", "Decompressing "..input.." using XZ with "..ram.."GB of RAM.")
-	os.execute(compressorManager.selectCompressionTool("xz").." -d --threads=0 --memlimit="..ram.."GB '"..input.."'")
+	local command = string.format("%s -d --threads=0 --memlimit=%sGB '%s'",
+		compressorManager.selectCompressionTool("xz"),
+		ram,
+		input:gsub("'", "'\\''")
+	)
+	logSystem.log("debug", "Running command : "..command)
+	os.execute(command)
 	return "success"
 end
 

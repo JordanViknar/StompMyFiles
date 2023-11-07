@@ -18,17 +18,36 @@ end
 
 local function compressFunction(input)
 	logSystem.log("info", "Compressing "..input.." using dolphin-tool.")
-	os.execute(compressorManager.selectCompressionTool("dolphin-tool").." convert -f rvz -c lzma2 -l 9 -b 2097152 -i '"..input.."' -o '"..fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input)..".rvz'")
+
+	local command = string.format("%s convert -f rvz -c lzma2 -l 9 -b 2097152 -i '%s' -o '%s'",
+		compressorManager.selectCompressionTool("dolphin-tool"),
+		input:gsub("'", "'\\''"),
+		(fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input)..".rvz"):gsub("'", "'\\''")
+	)
+	logSystem.log("debug", "Running command : "..command)
+	os.execute(command)
+	
+	logSystem.log("debug", "Deleting ISO file...")
 	os.execute("rm '"..input.."'")
+
 	return "success"
 end
 
 local function decompressFunction(input)
 	logSystem.log("info", "Decompressing "..input.." using dolphin-tool.")
-	os.execute(compressorManager.selectCompressionTool("dolphin-tool").." convert -f iso -i '"..input.."' -o '"..fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input)..".iso'")
+
+	local command = string.format("%s convert -f iso -i '%s' -o '%s'",
+		compressorManager.selectCompressionTool("dolphin-tool"),
+		input:gsub("'", "'\\''"),
+		(fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input)..".iso"):gsub("'", "'\\''")
+	)
+	logSystem.log("debug", "Running command : "..command)
+	os.execute(command)
+
+	logSystem.log("debug", "Deleting RVZ file...")
 	os.execute("rm '"..input.."'")
+
 	return "success"
 end
-
 
 return Compressor:new(compressorName, checkFunction, compressFunction, decompressFunction)
