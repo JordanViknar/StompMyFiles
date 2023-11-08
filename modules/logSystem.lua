@@ -1,6 +1,6 @@
 local logSystem = {}
 
-local function color(color, message)
+local function color(colorId, message)
 	local colorList = {
 		["red"] = "\27[31m",
 		["green"] = "\27[32m",
@@ -14,34 +14,34 @@ local function color(color, message)
 		["reset"] = "\27[0m"
 	}
 
-	return colorList[color]..message..colorList["reset"]
+	return colorList[colorId]..message..colorList["reset"]
 end
 
 function logSystem.log(type, message)
 	local logReactions = {
-		["info"] = function(message)
-			print("["..color("blue","Info").."] "..message)
+		["info"] = function(text)
+			print("["..color("blue","Info").."] "..text)
 		end,
-		["warning"] = function(message)
-			print("["..color("yellow","Warning").."] "..color("yellow",message))
+		["warning"] = function(text)
+			print("["..color("yellow","Warning").."] "..color("yellow",text))
 		end,
-		["error"] = function(message)
-			print(color("red","[Error]").." "..color("red",message))
+		["error"] = function(text)
+			print(color("red","[Error]").." "..color("red",text))
 		end,
-		["debug"] = function(message)
+		["debug"] = function(text)
 			if ARGUMENTS and ARGUMENTS.settings.verboseEnabled == true then
-				print("["..color("grey","Debug").."] "..color("grey",message))
+				print("["..color("grey","Debug").."] "..color("grey",text))
 			end
 		end,
-		["switch"] = function (message)
-			print(color("green","[Output Switch] "..message))
+		["switch"] = function (text)
+			print(color("green","[Output Switch] "..text))
 			print("--------------------------")
 		end,
-		["switchEnd"] = function (message)
+		["switchEnd"] = function (text)
 			print("--------------------------")
 		end,
-		["download"] = function (message)
-			print("["..color("green","Download").."] "..message)
+		["download"] = function (text)
+			print("["..color("green","Download").."] "..text)
 		end
 	}
 

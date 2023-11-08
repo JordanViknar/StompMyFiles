@@ -5,14 +5,15 @@ pkgver=r2.5abd7f2
 pkgrel=1
 pkgdesc="Universal file compression utility, aiming for brute strength (at the cost of time) and ease of use."
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
-url=https://github.com/JordanViknar/Stomp-My-Files
+url=https://github.com/JordanViknar/StompMyFiles
 license=(MPL-2.0)
 depends=(
 	'lua'
-	'wget'
-	'iputils'
+	'lua-filesystem' # Used for some filesystem operations
+	'lua-socket' # Used for pings and downloads
+	'lua-sec' # Used for secure https downloads
 	'which'
-	'tar'
+	'tar' # Used to unpack downloads
 	'grep'
 	'xz'
 )

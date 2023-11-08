@@ -1,8 +1,12 @@
--- Log System
+-- Custom Modules
 local logSystem = require("modules.logSystem")
+local fsUtils = require("modules.fsUtils")
 
 -- Variables
-local isoMode = nil -- Determines how ISOs are treated. nil = not specified, "iso" = normal ISO, "wii_gc" = Wii/GameCube ISO
+
+-- Determines how ISOs are treated. nil = not specified, "iso" = normal ISO, "wii_gc" = Wii/GameCube ISO
+local isoMode = nil
+
 local ignoreSystemLibs = false -- Determines whether or not to ignore system libraries.
 local verboseEnabled = false -- Determines whether or not to print debug messages.
 
@@ -26,12 +30,14 @@ local arguments = {
 	end,
 	["--wii-gc"] = function()
 		if isoMode == nil then
+			print()
 			print("----------------------------------------------------------------------------")
 			print("WARNING ! StompMyFiles aims for pure brute strength, not performance !")
 			print("Wii/GameCube games compressed with it may not perform well or malfunction until decompression.")
 			print("----------------------------------------------------------------------------")
 			io.write("Press Enter to confirm you've read this prompt.")
 			io.read()
+			print()
 
 			logSystem.log("info", "ISOs will be treated as Wii/GameCube games.")
 			isoMode = "wii_gc"
@@ -68,10 +74,7 @@ for _,i in ipairs(arg) do
 		end
 
 		-- Else we assume the user is trying to open a file.
-		local f = io.open(i, "r")
-		if (f) then
-			f:close()
-
+		if fsUtils.exists(i) then
 			-- We check that it isn't already in the table
 			local checkIfInTable = function ()
 				for _,j in ipairs(toBeCompressed) do
@@ -81,7 +84,7 @@ for _,i in ipairs(arg) do
 				end
 				return false
 			end
-				
+
 			if (not checkIfInTable()) then
 				table.insert(toBeCompressed, i)
 			else

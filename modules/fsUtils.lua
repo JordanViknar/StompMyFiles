@@ -1,14 +1,17 @@
+-- External Modules
+local lfs = require("lfs")
+
+-- Module
 local fsUtils = {}
 
 --- Check if a file or directory exists
-function fsUtils.exists(file)
-	local ok, err, code = os.rename(file, file)
-	if not ok then
-		if code == 13 then
-			return true
-		end
+function fsUtils.exists(path)
+	local attributes, err = lfs.attributes(path)
+	if attributes then
+		return true
+	else
+		return false, err
 	end
-	return ok, err
 end
 
 -- Get the file extension
@@ -18,7 +21,12 @@ end
 
 -- Check if it's a folder
 function fsUtils.isDirectory(path)
-	return fsUtils.exists(path.."/")
+	local attributes, err = lfs.attributes(path)
+	if attributes and attributes.mode == "directory" then
+		return true
+	else
+		return false, err
+	end
 end
 
 -- Grab file name
@@ -34,22 +42,13 @@ end
 -- Grab file name without extension
 function fsUtils.getFileNameNoExt(path)
 	local filename = fsUtils.getFileName(path)
-	local filenameWithoutExtension = filename:match("(.+)%..+")
-	if filenameWithoutExtension then
-		return filenameWithoutExtension
-	else
-		return filename
-	end
+	return filename:match("(.+)%..+") or filename
 end
 
 -- Grab directory
 function fsUtils.getDirectory(path)
 	local directory = path:match("^(.+)/[^/]+$")
-	if directory then
-		return directory
-	else
-		return "."
-	end
+	return directory or "."
 end
 
 return fsUtils

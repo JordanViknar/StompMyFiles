@@ -1,12 +1,7 @@
---[[
-						INITIALIZATION
-]]
+-- Program Data
 require("extra.programMetadata") -- Constants used throughout the program.
 
---[[
-	First, we grab the most important part of the program.
-	This table allows us to easily manage compressors
-]]
+-- Compression Tools
 local compressors = {
 	-- Common but strong compressors
 	["7z"] = require("compressors.7z"),
@@ -18,6 +13,9 @@ local compressors = {
 	-- ["nsz"] = require("compressors.nsz")
 }
 local bannedExtensions = require("extra.bannedExtensions")
+
+-- External Modules
+local lfs = require("lfs")
 
 -- Custom Modules
 local fsUtils = require("modules.fsUtils")
@@ -33,7 +31,7 @@ local checkedCompressors = {}
 -- Cache folder
 if (not fsUtils.exists(CACHE_FOLDER)) then
 	logSystem.log("debug", "Creating stomp-my-files folder in cache...")
-	os.execute("mkdir '"..CACHE_FOLDER.."'")
+	lfs.mkdir(CACHE_FOLDER)
 end
 
 -- Checks
@@ -57,7 +55,7 @@ local function attemptOperation(name, type, input)
 		else
 			error("Unknown operation type "..type..".")
 		end
-	else 
+	else
 		logSystem.log("warning", "Could not provide "..name.." for \""..input.."\". Skipping...")
 		filesSkipped = filesSkipped + 1
 		return "failed"
@@ -126,15 +124,22 @@ for _,input in ipairs(ARGUMENTS.toBeCompressed) do
 		else
 			-- We rely on xz as a fallback to unsupported extensions.
 			if extension ~= nil then
-				logSystem.log("debug", "No particular behavior defined for "..extension..". Relying on default compression behavior...")
+				logSystem.log(
+					"debug",
+					"No particular behavior defined for "..extension..". Relying on default compression behavior..."
+				)
 			else
-				logSystem.log("debug", "No particular behavior defined for files without extension (yet). Relying on default compression behavior...")
+				logSystem.log(
+					"debug",
+					"No particular behavior defined for files without extension (yet). Relying on default compression behavior..."
+				)
 			end
 			attemptOperation("xz", "compress", input)
 		end
 	end
 end
 
+-- End of program routine
 
 if (filesSkipped ~= 0) then
 	if (filesSkipped == #ARGUMENTS.toBeCompressed) then

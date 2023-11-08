@@ -1,3 +1,7 @@
+-- External modules
+local socket = require("socket.http")
+local lfs = require("lfs")
+
 -- Custom modules
 local logSystem = require("modules.logSystem")
 local Compressor = require("modules.compressorObject")
@@ -13,12 +17,12 @@ local function checkFunction()
 	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == true and ARGUMENTS.settings.ignoreSystemLibs == false) then
 		return "system"
 	else
-		logSystem.log("warning", "7z is not available from your system. Checking local cache...")
+		logSystem.log("warning", "7z can't be provided by your system. Checking local cache...")
 
 		-- Make 7z folder in cache if missing
 		if (not fsUtils.exists(CACHE_FOLDER..compressorName)) then
 			logSystem.log("debug", "Creating 7z folder in cache...")
-			os.execute("mkdir '"..CACHE_FOLDER.."7z'")
+			lfs.mkdir(CACHE_FOLDER.."7z")
 		end
 
 		-- Check if the local version is present or updated
@@ -35,7 +39,7 @@ local function checkFunction()
 				end
 			end
 		else
-			logSystem.log("download", "7z is missing from system and local cache. Downloading...")
+			logSystem.log("warning", "7z is unavailable from system and local cache.")
 		end
 
 		-- Check if we have internet
@@ -50,16 +54,24 @@ local function checkFunction()
 		end
 
 		-- Download 7zip and put its executable in the local cache
-		logSystem.log("download", "Downloading 7z...")
-		local downloadCommand = string.format("wget -O '%s' '%s'",
-			CACHE_FOLDER..compressorName.."/7z-linux-"..platform..".tar.xz",
-			"https://www.7-zip.org/a/7z"..localVersion.."-linux-"..platform..".tar.xz"
-		)
-		logSystem.log("debug", "Running command : "..downloadCommand)
-		logSystem.log("switch", "Passing output to wget...")
-		os.execute(downloadCommand)
-		logSystem.log("switchEnd")
-		logSystem.log("debug", "Downloaded 7z.")
+		logSystem.log("download", "Downloading 7z into local cache...")
+		local response, status, headers = socket.request("https://www.7-zip.org/a/7z"..localVersion.."-linux-"..platform..".tar.xz")
+		if status == 200 then
+			-- If we succeed, we save the downloaded content to a file
+			local file = io.open(CACHE_FOLDER..compressorName.."/7z-linux-"..platform..".tar.xz", "wb")
+
+			if file then
+				file:write(response)
+				file:close()
+				logSystem.log("debug", "Downloaded 7z.")
+			else
+				logSystem.log("error", "Failed to save the downloaded content to a file.")
+				return "unavailable"
+			end
+		else
+			logSystem.log("error", "Failed to download 7z : HTTP status code " .. status)
+			return "unavailable"
+		end
 
 		-- Extract the archive
 		logSystem.log("debug", "Extracting 7z...")
@@ -73,7 +85,7 @@ local function checkFunction()
 
 		-- Remove the archive
 		logSystem.log("debug", "Removing 7z archive...")
-		os.execute("rm '"..CACHE_FOLDER..compressorName.."/7z-linux-"..platform..".tar.xz'")
+		os.remove(CACHE_FOLDER..compressorName.."/7z-linux-"..platform..".tar.xz")
 
 		-- Rename 7zz executable into 7z
 		logSystem.log("debug", "Renaming 7zz executable into 7z...")
@@ -122,16 +134,18 @@ end
 local function decompressFunction(input)
 	-- Decompress
 	logSystem.log("info", "Decompressing "..input.." using 7z.")
-	local command = string.format("%s x '%s' -o'%s' && rm '%s'",
+	local command = string.format("%s x '%s' -o'%s'",
 		compressorManager.selectCompressionTool("7z"),
 		input:gsub("'", "'\\''"),
-		fsUtils.getDirectory(input):gsub("'", "'\\''"),
-		input:gsub("'", "'\\''")
+		fsUtils.getDirectory(input):gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
 	logSystem.log("switch", "Passing output to 7z...")
 	os.execute(command)
 	logSystem.log("switchEnd")
+
+	logSystem.log("debug", "Removing archive...")
+	os.remove(input:gsub("'", "'\\''"))
 	return "success"
 end
 

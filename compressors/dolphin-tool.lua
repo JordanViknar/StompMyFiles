@@ -30,9 +30,9 @@ local function compressFunction(input)
 	)
 	logSystem.log("debug", "Running command : "..command)
 	os.execute(command)
-	
+
 	logSystem.log("debug", "Deleting ISO file...")
-	os.execute("rm '"..input.."'")
+	os.remove(input:gsub("'", "'\\''"))
 
 	return "success"
 end
@@ -49,7 +49,7 @@ local function decompressFunction(input)
 	os.execute(command)
 
 	logSystem.log("debug", "Deleting RVZ file...")
-	os.execute("rm '"..input.."'")
+	os.remove(input:gsub("'", "'\\''"))
 
 	return "success"
 end

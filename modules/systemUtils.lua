@@ -1,7 +1,11 @@
-local systemUtils = {}
+-- External Modules
+local socket = require("socket")
 
 -- Custom modules
 local logSystem = require("modules.logSystem")
+
+-- Module
+local systemUtils = {}
 
 function systemUtils.checkPlatform()
 	if (os.execute("uname -m | grep 'x86_64' > /dev/null 2>&1") == true) then
@@ -19,13 +23,19 @@ function systemUtils.checkPlatform()
 end
 
 function systemUtils.isInternetAvailable()
-	local internetTest = os.execute("ping -q -c 1 1.1.1.1 &> /dev/null")
+	local host = "1.1.1.1"
+	local port = 53
 
-	if internetTest == true then
+	local client = socket.udp()
+	client:settimeout(5)
+	local result, err = client:sendto("", host, port)
+	client:close()
+
+	if result then
 		logSystem.log("debug", "Internet connection is available.")
 		return true
 	else
-		logSystem.log("error", "Internet connection is not available.")
+		logSystem.log("error", "Internet connection is not available. Error : "..err)
 		return false
 	end
 end
