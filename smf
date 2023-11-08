@@ -20,4 +20,5 @@ if [ -x "$(command -v lua)" ]; then
 	lua $SCRIPT_PATH/smf.lua "$@"
 else
 	echo "No Lua installation found. Please install Lua and try again."
+	exit 1
 fi
