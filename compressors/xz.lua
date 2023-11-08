@@ -28,7 +28,10 @@ local function checkFunction()
 	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == true and ARGUMENTS.settings.ignoreSystemLibs == false) then
 		return "system"
 	else
-		logSystem.log("error", "XZ is somehow unavailable from your system. Due to it being considered critical, local cache installation will not be used.")
+		logSystem.log(
+			"error",
+			"XZ can't be provided by your system or locally. Default file compression/decompression support unavailable."
+		)
 		return "unavailable"
 	end
 end

@@ -15,7 +15,7 @@ local arguments = {
 		require("extra.help")
 		os.exit(0)
 	end,
-	["--normal-iso"] = function()
+	["--iso"] = function()
 		if isoMode == nil then
 			logSystem.log("info", "ISOs will be treated normally.")
 			isoMode = "iso"

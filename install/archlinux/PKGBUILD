@@ -17,9 +17,9 @@ depends=(
 	'xz'
 )
 optdepends=(
-	'7z: Use 7z system installation for compression'
+	'p7zip: Use 7z system installation for compression'
+	'dolphin-emu: Enable Wii/GameCube compression through dolphin-tool'
 	'upx: (Not used yet) Use UPX system installation for compression'
-	'dolphin-emu: Use Dolphin Emulator system installation for compression'
 	'nsz: (Not used yet) Use NSZ system installation for compression'
 )
 makedepends=(git)

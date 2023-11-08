@@ -9,7 +9,7 @@ Arguments :\
 	--version : Displays the version of the program.\
 	--ignore-system : Ignore system executables.\
 \
-	--normal-iso : Treat ISOs as normal files.\
+	--iso : Treat ISOs as normal files.\
 	--wii-gc : Treat ISOs as Wii/GameCube games.\
 "
 

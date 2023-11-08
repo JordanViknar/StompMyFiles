@@ -12,6 +12,10 @@ local function checkFunction()
 	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == true and ARGUMENTS.settings.ignoreSystemLibs == false) then
 		return "system"
 	else
+		logSystem.log(
+			"error",
+			"dolphin-tool can't be provided by your system or locally. Wii/GameCube disc image support won't be available."
+		)
 		return "unavailable"
 	end
 end

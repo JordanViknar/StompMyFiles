@@ -144,4 +144,4 @@ if (filesSkipped ~= 0) then
 	end
 end
 
-logSystem.log("debug", "Main function ended. Exiting program...")
+logSystem.log("info", "Exiting StompMyFiles...")
