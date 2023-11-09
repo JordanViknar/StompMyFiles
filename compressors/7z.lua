@@ -118,7 +118,7 @@ local function compressFunction(input)
 
 	-- Compress
 	logSystem.log("info", "Compressing "..input.." using 7z with "..threads.." threads.")
-	local command = string.format("%s -sdel -mx9 -mmt%s a '%s.7z' '%s' ",
+	local command = string.format("%s -sdel -mx9 -ms=on -mmt%s a '%s.7z' '%s' ",
 		compressorManager.selectCompressionTool("7z"),
 		threads,
 		input:gsub("'", "'\\''"),
