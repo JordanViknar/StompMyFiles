@@ -141,11 +141,16 @@ local function decompressFunction(input)
 	)
 	logSystem.log("debug", "Running command : "..command)
 	logSystem.log("switch", "Passing output to 7z...")
-	os.execute(command)
+	local result = os.execute(command)
 	logSystem.log("switchEnd")
 
-	logSystem.log("debug", "Removing archive...")
-	os.remove(input:gsub("'", "'\\''"))
+	if result == true then
+		logSystem.log("debug", "Removing archive...")
+		os.remove(input:gsub("'", "'\\''"))
+	else
+		logSystem.log("error", "7z returned an error code. Archive file won't be removed.")
+		return "error"
+	end
 	return "success"
 end
 

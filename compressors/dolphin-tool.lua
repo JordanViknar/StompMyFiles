@@ -29,11 +29,14 @@ local function compressFunction(input)
 		(fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input)..".rvz"):gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
-	os.execute(command)
 
-	logSystem.log("debug", "Deleting ISO file...")
-	os.remove(input:gsub("'", "'\\''"))
-
+	if os.execute(command) == true then
+		logSystem.log("debug", "Removing ISO file...")
+		os.remove(input:gsub("'", "'\\''"))
+	else
+		logSystem.log("error", "dolphin-tool returned an error code. ISO file won't be removed.")
+		return "error"
+	end
 	return "success"
 end
 
@@ -46,10 +49,14 @@ local function decompressFunction(input)
 		(fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input)..".iso"):gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
-	os.execute(command)
 
-	logSystem.log("debug", "Deleting RVZ file...")
-	os.remove(input:gsub("'", "'\\''"))
+	if os.execute(command) == true then
+		logSystem.log("debug", "Removing RVZ file...")
+		os.remove(input:gsub("'", "'\\''"))
+	else
+		logSystem.log("error", "dolphin-tool returned an error code. RVZ file won't be removed.")
+		return "error"
+	end
 
 	return "success"
 end
