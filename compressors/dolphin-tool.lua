@@ -6,7 +6,7 @@ local fsUtils = require("modules.fsUtils")
 
 -- Definitions
 local compressorName = "dolphin-tool"
-local localVersion = nil
+--local localVersion = nil
 
 local function checkFunction()
 	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == true and ARGUMENTS.settings.ignoreSystemLibs == false) then
@@ -33,11 +33,11 @@ local function compressFunction(input)
 	if os.execute(command) == true then
 		logSystem.log("debug", "Removing ISO file...")
 		os.remove(input:gsub("'", "'\\''"))
+		return "success"
 	else
 		logSystem.log("error", "dolphin-tool returned an error code. ISO file won't be removed.")
 		return "error"
 	end
-	return "success"
 end
 
 local function decompressFunction(input)
@@ -53,12 +53,11 @@ local function decompressFunction(input)
 	if os.execute(command) == true then
 		logSystem.log("debug", "Removing RVZ file...")
 		os.remove(input:gsub("'", "'\\''"))
+		return "success"
 	else
 		logSystem.log("error", "dolphin-tool returned an error code. RVZ file won't be removed.")
 		return "error"
 	end
-
-	return "success"
 end
 
 return Compressor:new(compressorName, checkFunction, compressFunction, decompressFunction)

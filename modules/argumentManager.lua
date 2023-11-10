@@ -9,9 +9,39 @@ local isoMode = nil
 
 local ignoreSystemLibs = false -- Determines whether or not to ignore system libraries.
 local verboseEnabled = false -- Determines whether or not to print debug messages.
+local enableSwitchSupport = false -- Determines whether or not to enable Nintendo Switch support.
 
 -- First, we give each argument an action.
 local arguments = {
+	["--enable-switch"] = function ()
+		if fsUtils.exists(os.getenv("HOME").."/.switch/prod.keys") then
+			if enableSwitchSupport == false then
+				logSystem.log("info", "Nintendo Switch production keys successfully located.")
+				print()
+				print("----------------------------------------------------------------------------")
+				print("WARNING ! Nintendo Switch game support is still experimental !")
+				print("Expect the operation to use A TON of memory.")
+				print("Do not proceed if you do not think your computer can handle it.")
+				print("Tip : zRAM can help with the operation. Enable it if possible.")
+				print("----------------------------------------------------------------------------")
+				io.write("Press Enter to confirm you've read this prompt.")
+				io.read()
+				print()
+
+				print("Are you sure ? This compression system is very memory intensive and may take a long time to complete.")
+				print("Even a computer with 16 GB of RAM and 16 GB of zRAM can run out of memory.")
+				io.write("Press Enter if you're certain you want to continue.")
+				io.read()
+				print()
+				
+				enableSwitchSupport = true
+				logSystem.log("warning", "Nintendo Switch game support enabled. Good luck !")
+			end
+		else
+			logSystem.log("error", "Nintendo Switch keys not found. Please put them as ~/.switch/prod.keys and try again.")
+			os.exit(1)
+		end
+	end,
 	["--ignore-system"] = function ()
 		ignoreSystemLibs = true
 	end,
@@ -103,5 +133,6 @@ end
 return {toBeCompressed = toBeCompressed, settings = {
 	isoMode = isoMode,
 	ignoreSystemLibs = ignoreSystemLibs,
-	verboseEnabled = verboseEnabled
+	verboseEnabled = verboseEnabled,
+	switchSupport = enableSwitchSupport
 }}

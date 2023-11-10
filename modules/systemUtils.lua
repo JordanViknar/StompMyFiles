@@ -40,4 +40,14 @@ function systemUtils.isInternetAvailable()
 	end
 end
 
+function systemUtils.grabThreads()
+	local f = io.popen("cat /proc/cpuinfo | grep processor | wc -l")
+	if (not f) then
+		error("Could not get the number of CPU threads.")
+	end
+	local threads = f:read("*a")
+	f:close()
+	return tonumber(threads)
+end
+
 return systemUtils

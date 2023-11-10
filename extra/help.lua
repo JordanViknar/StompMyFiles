@@ -9,8 +9,12 @@ Arguments :\
 	--version : Displays the version of the program.\
 	--ignore-system : Ignore system executables.\
 \
+ISO support :\
 	--iso : Treat ISOs as normal files.\
 	--wii-gc : Treat ISOs as Wii/GameCube games.\
+\
+Nintendo Switch support :\
+	--enable-switch : Enable experimental Nintendo Switch game support.\
 "
 
 print(help)

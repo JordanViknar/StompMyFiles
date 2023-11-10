@@ -9,8 +9,8 @@ local compressors = {
 
 	-- Less common, but advantaged when used right.
 	-- ["upx"] = require("compressors.upx"),
-	["dolphin-tool"] = require("compressors.dolphin-tool")
-	-- ["nsz"] = require("compressors.nsz")
+	["dolphin-tool"] = require("compressors.dolphin-tool"),
+	["nsz"] = require("compressors.nsz")
 }
 local bannedExtensions = require("extra.bannedExtensions")
 
@@ -96,31 +96,67 @@ for _,input in ipairs(ARGUMENTS.toBeCompressed) do
 			break
 		end
 
+		-- This function is used for Nintendo Switch related files.
+		local function nintendoSwitchHandler(type, file)
+			if (ARGUMENTS.settings.switchSupport == true) then
+				if (type == "compress") then
+					return attemptOperation("nsz","compress", file)
+				elseif (type == "decompress") then
+					return attemptOperation("nsz","decompress", file)
+				else
+					error("Unknown operation type "..type..".")
+				end
+			else
+				logSystem.log("warning", "Nintendo Switch support is disabled. Use --enable-switch. Skipping...")
+				return "failed"
+			end
+		end
+
 		-- We use a switch to determine which compressor to use.
 		local switch = {
+			-- Common
 			["7z"] = function()
-				attemptOperation("7z", "decompress", input)
+				return attemptOperation("7z", "decompress", input)
 			end,
 			["xz"] = function()
-				attemptOperation("xz", "decompress", input)
+				return attemptOperation("xz", "decompress", input)
 			end,
+
 			["iso"] = function()
 				if ARGUMENTS.settings.isoMode == "wii_gc" then
-					attemptOperation("dolphin-tool", "compress", input)
+					return attemptOperation("dolphin-tool", "compress", input)
 				elseif ARGUMENTS.settings.isoMode == "iso" then
-					attemptOperation("xz", "compress", input)
+					return attemptOperation("xz", "compress", input)
 				else
 					logSystem.log("warning", "No behavior specified for ISOs. Skipping...")
-					filesSkipped = filesSkipped + 1
+					return "error"
 				end
 			end,
 			["rvz"] = function()
-				attemptOperation("dolphin-tool", "decompress", input)
+				return attemptOperation("dolphin-tool", "decompress", input)
+			end,
+
+			-- Nintendo Switch
+			["nsp"] = function ()
+				return nintendoSwitchHandler("compress", input)
+			end,
+			["xci"] = function ()
+				return nintendoSwitchHandler("compress", input)
+			end,
+			["nsz"] = function ()
+				return nintendoSwitchHandler("decompress", input)
+			end,
+			["xcz"] = function ()
+				return nintendoSwitchHandler("decompress", input)
 			end
 		}
 		local f = switch[extension]
 		if (f) then
-			f()
+			local result = f()
+
+			if (result == "error") then
+				filesSkipped = filesSkipped + 1
+			end
 		else
 			-- We rely on xz as a fallback to unsupported extensions.
 			if extension ~= nil then
@@ -134,7 +170,10 @@ for _,input in ipairs(ARGUMENTS.toBeCompressed) do
 					"No particular behavior defined for files without extension (yet). Relying on default compression behavior..."
 				)
 			end
-			attemptOperation("xz", "compress", input)
+
+			if (attemptOperation("xz", "compress", input) == "error") then
+				filesSkipped = filesSkipped + 1
+			end
 		end
 	end
 end

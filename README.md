@@ -80,7 +80,7 @@ ISO file specific options (if none of these are specified, StompMyFiles will ski
 | 7z | ✅ | ✅ | Folders |
 | xz | ❌ | ✅ | Default choice for single files |
 | dolphin-tool | ❌ | ✅ | Nintendo Wii / GameCube games (requires Dolphin Emulator to be installed) |
-| nsz | *Planned* | *Planned* | Nintendo Switch games |
+| nsz | *Planned* | ✅ | Nintendo Switch games |
 | upx | *Planned ?* | *Planned ?* | Executables |
 
 ## Compression Test Results

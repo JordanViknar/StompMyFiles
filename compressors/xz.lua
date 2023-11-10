@@ -22,7 +22,7 @@ end
 
 -- Definitions
 local compressorName = "xz"
-local localVersion = nil
+--local localVersion = nil
 
 local function checkFunction()
 	if (os.execute("which "..compressorName.." > /dev/null 2>&1") == true and ARGUMENTS.settings.ignoreSystemLibs == false) then
@@ -40,28 +40,40 @@ local function compressFunction(input)
 	local ram = getMemoryToUse()
 
 	logSystem.log("info", "Compressing "..input.." using XZ with "..ram.."GB of RAM.")
+	-- Compression Command
 	local command = string.format("%s -z9e --threads=0 --memlimit=%sGB '%s'",
 		compressorManager.selectCompressionTool("xz"),
 		ram,
 		input:gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
-	os.execute(command)
-	return "success"
+
+	if os.execute(command) then
+		return "success"
+	else
+		logSystem.log("error", "XZ returned an error code.")
+		return "error"
+	end
 end
 
 local function decompressFunction(input)
 	local ram = getMemoryToUse()
 
 	logSystem.log("info", "Decompressing "..input.." using XZ with "..ram.."GB of RAM.")
+	-- Decompression Command
 	local command = string.format("%s -d --threads=0 --memlimit=%sGB '%s'",
 		compressorManager.selectCompressionTool("xz"),
 		ram,
 		input:gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
-	os.execute(command)
-	return "success"
+
+	if os.execute(command) then
+		return "success"
+	else
+		logSystem.log("error", "XZ returned an error code.")
+		return "error"
+	end
 end
 
 
