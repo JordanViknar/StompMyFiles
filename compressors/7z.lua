@@ -105,6 +105,10 @@ local function checkFunction()
 end
 
 local function compressFunction(input)
+	-- Switch to the directory of the input file and save the current working directory
+	local workingDirectory = lfs.currentdir()
+	lfs.chdir(input)
+
 	--Get number of CPU threads
 	logSystem.log("debug", "Getting number of CPU threads for 7z...")
 	local threads = systemUtils.grabThreads()
@@ -112,19 +116,24 @@ local function compressFunction(input)
 
 	-- Compression Command
 	logSystem.log("info", "Compressing "..input.." using 7z with "..threads.." threads.")
-	local command = string.format("%s -sdel -mx9 -ms=on -mmt%s a '%s.7z' '%s' ",
+	local command = string.format("%s -sdel -mx9 -ms=on -mmt%s a '../%s.7z' '*' ",
 		compressorManager.selectCompressionTool("7z"),
 		threads,
-		input:gsub("'", "'\\''"),
-		input:gsub("'", "'\\''")
+		fsUtils.getFileName(input):gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
 
 	logSystem.log("switch", "Passing output to 7z...")
 	local result = os.execute(command)
 	logSystem.log("switchEnd")
+
+	-- Restore the working directory
+	lfs.chdir(workingDirectory)
 	
 	if result == true then
+		-- Delete leftover folder
+		os.remove(input)
+
 		return "success"
 	else
 		logSystem.log("error", "7z returned an error code.")
@@ -138,7 +147,7 @@ local function decompressFunction(input)
 	local command = string.format("%s x '%s' -o'%s'",
 		compressorManager.selectCompressionTool("7z"),
 		input:gsub("'", "'\\''"),
-		fsUtils.getDirectory(input):gsub("'", "'\\''")
+		fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input):gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
 
