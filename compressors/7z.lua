@@ -105,30 +105,40 @@ local function checkFunction()
 end
 
 local function compressFunction(input)
+	-- Switch to the directory of the input file and save the current working directory
+	local workingDirectory = lfs.currentdir()
+	lfs.chdir(input)
+
 	--Get number of CPU threads
 	logSystem.log("debug", "Getting number of CPU threads for 7z...")
-	local f = io.popen("cat /proc/cpuinfo | grep processor | wc -l")
-	if (not f) then
-		error("Could not get the number of CPU threads.")
-	end
-	local threads = f:read("*a")
-	f:close()
-	threads = tonumber(threads)
+	local threads = systemUtils.grabThreads()
 	logSystem.log("debug", "Got "..threads.." threads.")
 
-	-- Compress
+	-- Compression Command
 	logSystem.log("info", "Compressing "..input.." using 7z with "..threads.." threads.")
-	local command = string.format("%s -sdel -mx9 -ms=on -mmt%s a '%s.7z' '%s' ",
+	local command = string.format("%s -sdel -mx9 -ms=on -mmt%s a '../%s.7z' '*' ",
 		compressorManager.selectCompressionTool("7z"),
 		threads,
-		input:gsub("'", "'\\''"),
-		input:gsub("'", "'\\''")
+		fsUtils.getFileName(input):gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
+
 	logSystem.log("switch", "Passing output to 7z...")
-	os.execute(command)
+	local result = os.execute(command)
 	logSystem.log("switchEnd")
-	return "success"
+
+	-- Restore the working directory
+	lfs.chdir(workingDirectory)
+	
+	if result == true then
+		-- Delete leftover folder
+		os.remove(input)
+
+		return "success"
+	else
+		logSystem.log("error", "7z returned an error code.")
+		return "error"
+	end
 end
 
 local function decompressFunction(input)
@@ -137,9 +147,10 @@ local function decompressFunction(input)
 	local command = string.format("%s x '%s' -o'%s'",
 		compressorManager.selectCompressionTool("7z"),
 		input:gsub("'", "'\\''"),
-		fsUtils.getDirectory(input):gsub("'", "'\\''")
+		fsUtils.getDirectory(input).."/"..fsUtils.getFileNameNoExt(input):gsub("'", "'\\''")
 	)
 	logSystem.log("debug", "Running command : "..command)
+
 	logSystem.log("switch", "Passing output to 7z...")
 	local result = os.execute(command)
 	logSystem.log("switchEnd")
@@ -147,11 +158,11 @@ local function decompressFunction(input)
 	if result == true then
 		logSystem.log("debug", "Removing archive...")
 		os.remove(input:gsub("'", "'\\''"))
+		return "success"
 	else
 		logSystem.log("error", "7z returned an error code. Archive file won't be removed.")
 		return "error"
 	end
-	return "success"
 end
 
 
