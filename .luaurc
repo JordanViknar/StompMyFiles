@@ -1,0 +1,12 @@
+{
+	"languageMode": "strict",
+	"lint": {
+    	"*": false
+	},
+	"aliases": {
+		"Metadata" : "src/Metadata",
+		"Utilities" : "src/Utilities",
+		"Classes" : "src/Classes",
+		"Tools" : "src/Tools"
+	}
+}
