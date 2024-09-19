@@ -43,4 +43,9 @@ function Console.separator()
 	print('---------------------------------------------------------------')
 end
 
+function Console.visibleError(text: string): any
+	Console.log('error', text)
+	error(text)
+end
+
 return Console

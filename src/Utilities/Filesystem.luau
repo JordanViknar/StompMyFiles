@@ -1,5 +1,3 @@
-local fs = require('@lune/fs')
-
 local Filesystem = {}
 
 function Filesystem.getFileExtension(path: string): string?

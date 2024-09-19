@@ -1,5 +1,5 @@
 return {
 	sevenz = nil,
-	xz = nil,
-	dolphin_tool = nil,
+	xz = require('xz'),
+	dolphin_tool = require('dolphin-tool'),
 }

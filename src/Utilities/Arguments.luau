@@ -5,7 +5,7 @@ local stdio = require('@lune/stdio')
 local Console = require('@Utilities/Console')
 local Program = require('@Metadata/Program')
 
-type Setup = {
+export type Setup = {
 	paths: { string },
 	settings: {
 		ISOHandling: 'Wii/GC' | 'Normal',
@@ -32,8 +32,8 @@ function Arguments.detect(): Setup
 		['--wii-gc'] = function()
 			Console.separator()
 			print(
-				Console.color('red', 'WARNING !') .. '\n' ..
-				'StompMyFiles aims for pure brute strength, not performance !\nWii/GameCube games compressed with it may not perform well or malfunction under Dolphin until decompression.'
+				Console.color('red', 'WARNING !\n')
+					.. 'StompMyFiles aims for pure brute strength, not performance !\nWii/GameCube games compressed with it may not perform well or malfunction under Dolphin until decompression.'
 			)
 			Console.separator()
 			if stdio.prompt('confirm', 'Is this what you want ?') then

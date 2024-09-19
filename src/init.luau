@@ -23,7 +23,7 @@ function Application.start()
 	local filesSkipped = 0
 
 	for _, path in ipairs(setup.paths) do
-		if not Application.handlePath(path) then
+		if not Application.handlePath(path, setup) then
 			filesSkipped += 1
 		end
 	end
@@ -37,7 +37,7 @@ function Application.start()
 	end
 end
 
-function Application.handlePath(path: string) : boolean
+function Application.handlePath(path: string, setup: Arguments.Setup): boolean
 	if fs.isDir(path) then
 		-- For now, SMF only compresses the folder without recursively travelling it to compress files.
 		Console.log('debug', 'Path ' .. path .. ' is a directory. Using 7z...')
@@ -61,16 +61,22 @@ function Application.handlePath(path: string) : boolean
 		-- Using a switch to determine the tool to use.
 		local switch = {
 			-- Compress
-			['iso'] = nil,
+			['iso'] = function(file: string)
+				if setup.settings.ISOHandling == 'Wii/GC' then
+					Tools.dolphin_tool.compress(file)
+				else
+					Tools.xz.compress(file)
+				end
+			end,
 
 			-- Decompress
 			['7z'] = nil,
-			['xz'] = nil,
-			['rvz'] = nil,
+			['xz'] = Tools.xz.decompress,
+			['rvz'] = Tools.dolphin_tool.decompress,
 		}
-		local func: ((string) -> (boolean))? = switch[extension]
+		local func: ((string) -> boolean)? = switch[extension]
 		if func then
-			return func(path)
+			return pcall(func, path)
 		else
 			-- We rely on xz as a fallback to unsupported extensions.
 			if extension ~= nil then
@@ -78,9 +84,8 @@ function Application.handlePath(path: string) : boolean
 			else
 				Console.log('debug', 'No particular behavior defined for files without extension (yet). Relying on default compression behavior...')
 			end
-			-- Run XZ compression here.
 
-			return false
+			return pcall(Tools.xz.compress, path)
 		end
 	else
 		Console.log('error', 'Unknown problem with path "' .. path .. '".')
