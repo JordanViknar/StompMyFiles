@@ -1,20 +1,16 @@
+local fs = require('@lune/fs')
 local process = require('@lune/process')
 
 local Console = require('@Utilities/Console')
 local Filesystem = require('@Utilities/Filesystem')
-local System = require('@Utilities/System')
 local Tool = require('@Classes/Tool')
-
--- Variables
-local allowedRAM = math.floor((System.getRAM() / 1024) * 0.6)
 
 -- Properties
 
 local name = 'dolphin-tool'
 
 local function compress(executable: string, file: string)
-	Console.log('info', 'Compressing ' .. file .. ' using "' .. executable .. '".')
-	Console.visibleError('Unimplemented...')
+	Console.log('info', 'Compressing "' .. file .. '" using "' .. executable .. '".')
 
 	local dolphin_tool = process.spawn(executable, {
 		'convert',
@@ -28,19 +24,19 @@ local function compress(executable: string, file: string)
 		'2097152',
 		'-i',
 		file,
-		'-o', -- Unfinished
+		'-o',
+		(Filesystem.stripExtension(file) or file) .. '.rvz',
 	})
 
 	if dolphin_tool.ok then
-		print(dolphin_tool.stdout)
+		fs.removeFile(file)
 	else
 		Console.visibleError('"dolphin-tool" encountered an error : ' .. dolphin_tool.stderr)
 	end
 end
 
 local function decompress(executable: string, file: string)
-	Console.log('info', 'Decompressing ' .. file .. ' using "' .. executable .. '".')
-	Console.visibleError('Unimplemented...')
+	Console.log('info', 'Decompressing "' .. file .. '" using "' .. executable .. '".')
 
 	local dolphin_tool = process.spawn(executable, {
 		'convert',
@@ -48,11 +44,12 @@ local function decompress(executable: string, file: string)
 		'iso',
 		'-i',
 		file,
-		'-o', -- Unfinished
+		'-o',
+		(Filesystem.stripExtension(file) or file) .. '.iso',
 	})
 
 	if dolphin_tool.ok then
-		print(dolphin_tool.stdout)
+		fs.removeFile(file)
 	else
 		Console.visibleError('"dolphin-tool" encountered an error : ' .. dolphin_tool.stderr)
 	end

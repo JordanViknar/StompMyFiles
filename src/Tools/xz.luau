@@ -12,7 +12,8 @@ local allowedRAM = math.floor((System.getRAM() / 1024) * 0.6)
 local name = 'xz'
 
 local function compress(executable: string, file: string)
-	Console.log('info', 'Compressing ' .. file .. ' using "' .. executable .. '" with ' .. allowedRAM .. 'GB of RAM.')
+	Console.log('info', 'Compressing "' .. file .. '" using "' .. executable .. '" with ' .. allowedRAM .. 'GB of RAM.')
+
 	local xz = process.spawn(executable, {
 		'-z9e',
 		'--threads=0',
@@ -26,7 +27,7 @@ local function compress(executable: string, file: string)
 end
 
 local function decompress(executable: string, file: string)
-	Console.log('info', 'Decompressing ' .. file .. ' using "' .. executable .. '" with ' .. allowedRAM .. 'GB of RAM.')
+	Console.log('info', 'Decompressing "' .. file .. '" using "' .. executable .. '" with ' .. allowedRAM .. 'GB of RAM.')
 	local xz = process.spawn(executable, {
 		'-d',
 		'--threads=0',
