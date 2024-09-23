@@ -17,4 +17,8 @@ function Filesystem.stripExtension(path: string): string?
 	end
 end
 
+function Filesystem.getParent(path: string): string?
+	return path:match('^(.*)/')
+end
+
 return Filesystem

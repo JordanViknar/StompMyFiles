@@ -1,5 +1,3 @@
-local process = require('@lune/process')
-
 local Console = require('@Utilities/Console')
 local System = require('@Utilities/System')
 local Tool = require('@Classes/Tool')
@@ -13,31 +11,22 @@ local name = 'xz'
 
 local function compress(executable: string, file: string)
 	Console.log('info', 'Compressing "' .. file .. '" using "' .. executable .. '" with ' .. allowedRAM .. 'GB of RAM.')
-
-	local xz = process.spawn(executable, {
+	System.runExecutable(executable, {
 		'-z9e',
 		'--threads=0',
 		'--memlimit=' .. allowedRAM .. 'GB',
 		file,
 	})
-
-	if not xz.ok then
-		Console.visibleError('"xz" encountered an error : ' .. xz.stderr)
-	end
 end
 
 local function decompress(executable: string, file: string)
 	Console.log('info', 'Decompressing "' .. file .. '" using "' .. executable .. '" with ' .. allowedRAM .. 'GB of RAM.')
-	local xz = process.spawn(executable, {
+	System.runExecutable(executable, {
 		'-d',
 		'--threads=0',
 		'--memlimit=' .. allowedRAM .. 'GB',
 		file,
 	})
-
-	if not xz.ok then
-		Console.visibleError('"xz" encountered an error : ' .. xz.stderr)
-	end
 end
 
 return Tool.new(name, compress, decompress)

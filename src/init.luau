@@ -39,10 +39,8 @@ end
 
 function Application.handlePath(path: string, setup: Arguments.Setup): boolean
 	if fs.isDir(path) then
-		-- For now, SMF only compresses the folder without recursively travelling it to compress files.
-		Console.log('debug', 'Path ' .. path .. ' is a directory. Using 7z...')
-
-		return true
+		Console.log('debug', 'Path "' .. path .. '" is a directory. Using 7z...')
+		return pcall(Tools.sevenz.compress, path)
 	elseif fs.isFile(path) then
 		-- The extension is our current way to determine which tool to use.
 		local extension = Filesystem.getFileExtension(path)
@@ -70,7 +68,7 @@ function Application.handlePath(path: string, setup: Arguments.Setup): boolean
 			end,
 
 			-- Decompress
-			['7z'] = nil,
+			['7z'] = Tools.sevenz.decompress,
 			['xz'] = Tools.xz.decompress,
 			['rvz'] = Tools.dolphin_tool.decompress,
 		}

@@ -8,7 +8,7 @@ local Program = require('@Metadata/Program')
 export type Setup = {
 	paths: { string },
 	settings: {
-		ISOHandling: 'Wii/GC' | 'Normal'
+		ISOHandling: 'Wii/GC' | 'Normal',
 	},
 }
 
@@ -61,6 +61,11 @@ function Arguments.detect(): Setup
 		else
 			-- Argument doesn't exist, we assume the user is trying to open a file.
 			if fs.metadata(argument).exists then
+				-- Avoid trailing slashes
+				if fs.isDir(argument) and string.sub(argument, -1) == '/' then
+					argument = string.sub(argument, 1, -2)
+				end
+
 				if not table.find(paths, argument) then
 					table.insert(paths, argument)
 				else
@@ -80,7 +85,7 @@ function Arguments.detect(): Setup
 	return {
 		paths = paths,
 		settings = {
-			ISOHandling = ISOHandling
+			ISOHandling = ISOHandling,
 		},
 	}
 end
