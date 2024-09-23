@@ -1,6 +1,0 @@
-NAME = "StompMyFiles"
-EXECUTABLE = "smf"
-VERSION = "indev"
-DEVELOPER = "JordanViknar"
-URL = "https://github.com/JordanViknar/StompMyFiles"
-CACHE_FOLDER = os.getenv("HOME").."/.cache/stomp-my-files/"
