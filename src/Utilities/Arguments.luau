@@ -8,8 +8,7 @@ local Program = require('@Metadata/Program')
 export type Setup = {
 	paths: { string },
 	settings: {
-		ISOHandling: 'Wii/GC' | 'Normal',
-		ignoreSystemLibs: boolean,
+		ISOHandling: 'Wii/GC' | 'Normal'
 	},
 }
 
@@ -18,13 +17,9 @@ local Arguments = {}
 function Arguments.detect(): Setup
 	-- Defaults
 	local ISOHandling: 'Wii/GC' | 'Normal' = 'Normal'
-	local ignoreSystemLibs: boolean = false
 
 	-- Arguments
 	local arguments = {
-		['--ignore-system'] = function()
-			ignoreSystemLibs = true
-		end,
 		['--help'] = function()
 			print(require('@Metadata/Help'))
 			process.exit(0)
@@ -85,8 +80,7 @@ function Arguments.detect(): Setup
 	return {
 		paths = paths,
 		settings = {
-			ISOHandling = ISOHandling,
-			ignoreSystemLibs = ignoreSystemLibs,
+			ISOHandling = ISOHandling
 		},
 	}
 end
